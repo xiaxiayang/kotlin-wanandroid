@@ -7,7 +7,7 @@ package com.yx.wanandroidkt.constans
  */
 class ApiConst {
     companion object{
-        const val  BASE_URL = "https://api.github.com/"
+        const val  BASE_URL = "https://www.wanandroid.com/"
         const val CONNECT_TIME_OUT_SECONDS = 20L
         const val READ_TIME_OUT_SECONDS = 20L
         const val WHITE_TIME_OUT_SECONDS = 20L

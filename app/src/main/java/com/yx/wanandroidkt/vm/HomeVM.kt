@@ -1,14 +1,11 @@
 package com.yx.wanandroidkt.vm
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.yx.wanandroidkt.Test
-import com.yx.wanandroidkt.http.RetrofitHelper
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.yx.wanandroidkt.api.ApiService
+import com.yx.wanandroidkt.http.HttpClient
 
 /**
  *
@@ -21,6 +18,8 @@ class HomeVM: ViewModel() {
         private const val TAG = "HomeVM"
     }
 
+    private var service :ApiService = HttpClient.reqApi
+
     private val users: MutableLiveData<Test> by lazy {
        MutableLiveData<Test>().also {
            getHomeData()
@@ -32,18 +31,19 @@ class HomeVM: ViewModel() {
    }
 
     private fun getHomeData(){
-        RetrofitHelper.reqApi!!.listRepos("xiaxiayang").enqueue(object: Callback<Test>{
-            override fun onFailure(call: Call<Test>, t: Throwable) {
-                Log.d(TAG, "onFailure: ")
+        HttpClient.enqueue(service.listRepos("xiaxiayang"),
+            object : HttpClient.IResultListener<Test>{
+            override fun onSuccess(data: Test?) {
+                users.value = data
             }
 
-            override fun onResponse(call: Call<Test>, response: Response<Test>) {
-                Log.d(TAG, "onResponse: ")
-                users.value = response.body()
+            override fun onError(message: String?) {
+                var test = Test()
+                test.avatar_url = message
+                users.value = test
             }
 
         })
-
 
     }
 }

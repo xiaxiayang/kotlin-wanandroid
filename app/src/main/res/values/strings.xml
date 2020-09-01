@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">WanandroidKt</string>
+    <string name="menu_home">首页</string>
+    <string name="menu_square">广场</string>
+    <string name="menu_official_accounts">公众号</string>
+    <string name="menu_system">体系</string>
+    <string name="menu_mine">我的</string>
 </resources>
