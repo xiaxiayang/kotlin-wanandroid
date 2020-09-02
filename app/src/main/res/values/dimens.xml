@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="dp_0" type="dimen">0dp</item>
+    <item name="dp_1" type="dimen">1dp</item>
+    <item name="dp_3" type="dimen">3dp</item>
+    <item name="dp_5" type="dimen">5dp</item>
+    <item name="dp_10" type="dimen">10dp</item>
+    <item name="dp_15" type="dimen">15dp</item>
+    <item name="dp_16" type="dimen">16dp</item>
+    <item name="dp_20" type="dimen">20dp</item>
+    <item name="dp_50" type="dimen">50dp</item>
+    <item name="dp_80" type="dimen">80dp</item>
+    <item name="dp_90" type="dimen">90dp</item>
+    <item name="dp_100" type="dimen">100dp</item>
+    <item name="dp_150" type="dimen">150dp</item>
+    <item name="dp_200" type="dimen">200dp</item>
+
+    <item name="toolbar_height" type="dimen">48dp</item>
+    <item name="rect_radius" type="dimen">5dp</item>
+
+    <item name="sp_12" type="dimen">12sp</item>
+    <item name="sp_13" type="dimen">13sp</item>
+    <item name="sp_14" type="dimen">14sp</item>
+    <item name="sp_15" type="dimen">15sp</item>
+    <item name="sp_16" type="dimen">16sp</item>
+    <item name="sp_18" type="dimen">18sp</item>
+    <item name="sp_20" type="dimen">20sp</item>
+
+
+
+
+
+
+</resources>

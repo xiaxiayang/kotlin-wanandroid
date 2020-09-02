@@ -5,4 +5,6 @@
     <string name="menu_official_accounts">公众号</string>
     <string name="menu_system">体系</string>
     <string name="menu_mine">我的</string>
+    <string name="tag_new">新</string>
+    <string name="tag_top">置顶</string>
 </resources>
