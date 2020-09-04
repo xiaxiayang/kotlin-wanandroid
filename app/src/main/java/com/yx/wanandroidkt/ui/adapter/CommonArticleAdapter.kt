@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.DiffUtil
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
@@ -12,10 +11,11 @@ import com.yx.wanandroidkt.R
 import com.yx.wanandroidkt.base.BasePagerAdapter
 import com.yx.wanandroidkt.base.BaseRvAdapter
 import com.yx.wanandroidkt.base.BaseViewHolder
+import com.yx.wanandroidkt.constans.Constans.POST_COMPARATOR
 import com.yx.wanandroidkt.loader.ImageLoader
 import com.yx.wanandroidkt.viewmodel.bean.ArticleBeanItem
 import com.yx.wanandroidkt.viewmodel.bean.BannerBean
-import kotlinx.android.synthetic.main.item_rv_home.view.*
+import kotlinx.android.synthetic.main.item_rv_article.view.*
 import kotlinx.android.synthetic.main.layout_banner_header.view.*
 
 
@@ -24,20 +24,7 @@ import kotlinx.android.synthetic.main.layout_banner_header.view.*
  * 添加描述
  * Created by yx on 2020/9/2
  */
-class HomeFragmentAdapter(layout: Int):BasePagerAdapter<ArticleBeanItem>(layout,POST_COMPARATOR){
-
-    companion object{
-        //处理paging差分处理数据
-        val POST_COMPARATOR = object : DiffUtil.ItemCallback<ArticleBeanItem>() {
-            override fun areContentsTheSame(oldItem: ArticleBeanItem, newItem: ArticleBeanItem): Boolean =
-                oldItem == newItem
-
-            override fun areItemsTheSame(oldItem: ArticleBeanItem, newItem: ArticleBeanItem): Boolean =
-                oldItem.id == newItem.id
-        }
-
-    }
-
+class CommonArticleAdapter(layout: Int):BasePagerAdapter<ArticleBeanItem>(layout,POST_COMPARATOR){
 
     @SuppressLint("SetTextI18n")
     override fun onBind(holder: BaseViewHolder, position: Int) {

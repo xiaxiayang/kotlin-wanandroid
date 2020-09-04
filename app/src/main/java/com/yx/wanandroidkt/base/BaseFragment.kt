@@ -1,6 +1,5 @@
 package com.yx.wanandroidkt.base
 
-import android.icu.text.CaseMap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +45,7 @@ abstract class BaseFragment: Fragment() {
     }
 
     private fun setToolbarLeftClick(){
-        if (layout_toolbar != null && iv_back.isShown){
+        if (layout_toolbar != null){
             layout_toolbar.setOnClickListener {
                activity?.finish()
             }

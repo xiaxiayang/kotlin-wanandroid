@@ -34,4 +34,12 @@ interface ApiService {
      */
     @GET("banner/json")
     fun getBanner():Call<BaseResponse<List<BannerBean>>>
+
+    /**
+     * 广场
+     * https://wanandroid.com/user_article/list/页码/json
+     */
+    @GET("user_article/list/{pageNumber}/json")
+    suspend fun listUserArticle(@Path("pageNumber") number: Int?):BaseResponse<BaseData<ArticleBeanItem>>
+
 }

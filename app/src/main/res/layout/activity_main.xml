@@ -26,6 +26,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        app:backgroundTint="@color/white"
         app:menu="@menu/home_navigation_items"
         app:labelVisibilityMode="labeled"
         app:itemBackground="@null"

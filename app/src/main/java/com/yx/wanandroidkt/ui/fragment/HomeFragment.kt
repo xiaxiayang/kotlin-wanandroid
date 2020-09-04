@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.yx.wanandroidkt.R
 import com.yx.wanandroidkt.base.BaseFragment
 import com.yx.wanandroidkt.base.LoadMoreAdapter
+import com.yx.wanandroidkt.ui.adapter.CommonArticleAdapter
 import com.yx.wanandroidkt.ui.adapter.HeaderAdapter
-import com.yx.wanandroidkt.ui.adapter.HomeFragmentAdapter
 import com.yx.wanandroidkt.ui.adapter.TopAdapter
 import com.yx.wanandroidkt.viewmodel.HomeFragmentVM
 import com.yx.wanandroidkt.viewmodel.bean.ArticleBeanItem
 import com.yx.wanandroidkt.viewmodel.bean.BannerBean
-import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_common_article.*
 
 /**
  *
@@ -34,7 +34,7 @@ class HomeFragment: BaseFragment() {
      * 文章列表的总的adapter，paging分页处理
      */
     private val adapter by lazy {
-        HomeFragmentAdapter(R.layout.item_rv_home)
+        CommonArticleAdapter(R.layout.item_rv_article)
     }
 
     /**
@@ -48,7 +48,7 @@ class HomeFragment: BaseFragment() {
      *置顶文章 adapter
      */
     private val topAdapter by lazy {
-        TopAdapter( R.layout.item_rv_home, topList)
+        TopAdapter( R.layout.item_rv_article, topList)
     }
 
     /**
@@ -66,15 +66,15 @@ class HomeFragment: BaseFragment() {
     private var topList  = mutableListOf<ArticleBeanItem>()
 
     override fun getLayoutId(): Int {
-        return  R.layout.fragment_home
+        return  R.layout.fragment_common_article
     }
 
     override fun initView() {
         setToolbarLeftImageVisibility(false)
         setTitle(resources.getString(R.string.menu_home))
 
-        rv_home.layoutManager = LinearLayoutManager(requireContext())
-        rv_home.adapter =  ConcatAdapter(bannerAdapter,topAdapter,articleAdapter)
+        rv_article.layoutManager = LinearLayoutManager(requireContext())
+        rv_article.adapter =  ConcatAdapter(bannerAdapter,topAdapter,articleAdapter)
 
         swipeRefreshLayout.setOnRefreshListener {
             requestHeader()
