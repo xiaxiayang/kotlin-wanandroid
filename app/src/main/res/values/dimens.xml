@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="dp_0" type="dimen">0dp</item>
+    <item name="px_1" type="dimen">1px</item>
     <item name="dp_1" type="dimen">1dp</item>
     <item name="dp_3" type="dimen">3dp</item>
     <item name="dp_5" type="dimen">5dp</item>
@@ -8,6 +9,7 @@
     <item name="dp_15" type="dimen">15dp</item>
     <item name="dp_16" type="dimen">16dp</item>
     <item name="dp_20" type="dimen">20dp</item>
+    <item name="dp_32" type="dimen">32dp</item>
     <item name="dp_50" type="dimen">50dp</item>
     <item name="dp_80" type="dimen">80dp</item>
     <item name="dp_90" type="dimen">90dp</item>
@@ -16,7 +18,7 @@
     <item name="dp_200" type="dimen">200dp</item>
 
     <item name="toolbar_height" type="dimen">48dp</item>
-    <item name="rect_radius" type="dimen">5dp</item>
+    <item name="rect_radius" type="dimen">2dp</item>
 
     <item name="sp_12" type="dimen">12sp</item>
     <item name="sp_13" type="dimen">13sp</item>

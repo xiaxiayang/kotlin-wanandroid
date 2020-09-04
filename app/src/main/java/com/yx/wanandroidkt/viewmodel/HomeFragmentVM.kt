@@ -1,15 +1,16 @@
 package com.yx.wanandroidkt.viewmodel
 
-import android.widget.Toast
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.yx.wanandroidkt.MyApplication
-import com.yx.wanandroidkt.Test
+import androidx.lifecycle.asLiveData
 import com.yx.wanandroidkt.api.ApiService
 import com.yx.wanandroidkt.http.HttpClient
+import com.yx.wanandroidkt.ui.adapter.datasource.HomeArticleRepository
 import com.yx.wanandroidkt.viewmodel.bean.ArticleBeanItem
-import com.yx.wanandroidkt.viewmodel.bean.BaseData
+import com.yx.wanandroidkt.viewmodel.bean.BannerBean
+import com.yx.wanandroidkt.viewmodel.bean.BaseResponse
 
 /**
  *
@@ -24,26 +25,64 @@ class HomeFragmentVM: ViewModel() {
 
     private var service :ApiService = HttpClient.reqApi
 
-    private val articles: MutableLiveData<BaseData<ArticleBeanItem>> by lazy {
-       MutableLiveData<BaseData<ArticleBeanItem>>().also {
-           getList()
-       }
+    private val banners: MutableLiveData<List<BannerBean>> by lazy {
+        MutableLiveData<List<BannerBean>>().also {
+            requestBanner()
+        }
     }
 
-   fun getArticleList(): LiveData<BaseData<ArticleBeanItem>>{
-       return articles
-   }
+    private val topArticles: MutableLiveData<List<ArticleBeanItem>> by lazy {
+        MutableLiveData<List<ArticleBeanItem>>().also {
+            requestTopArticle()
+        }
+    }
 
-    private fun getList(){
-        HttpClient.cmEnqueue(service.listArticle(0),object :HttpClient.IResultListener<BaseData<ArticleBeanItem>>{
-            override fun onSuccess(data: BaseData<ArticleBeanItem>?) {
-                articles.value = data
-            }
+    private val respository: HomeArticleRepository  by lazy {
+        HomeArticleRepository()
+    }
 
-            override fun onError(message: String?) {
-                Toast.makeText(MyApplication.instance(),message,Toast.LENGTH_SHORT).show()
-            }
 
-        })
+    fun getArticleList() = respository.getArticleList().asLiveData()
+
+    fun getBannerList(): LiveData<List<BannerBean>>{
+        return banners
+    }
+    fun geTopArticle(): LiveData<List<ArticleBeanItem>>{
+        return topArticles
+    }
+    private fun requestBanner(){
+        HttpClient.cmEnqueue(service.getBanner(),
+            object : HttpClient.IResultListener<BaseResponse<List<BannerBean>>>{
+                override fun onSuccess(response: BaseResponse<List<BannerBean>>?) {
+                    if (!response?.data.isNullOrEmpty()){
+                        banners.value = response?.data
+                    }
+                }
+
+                override fun onError(message: String?) {
+                    Log.d(TAG, "onError: getBanner$message ")
+                }
+
+            })
+
+    }
+    private fun requestTopArticle(){
+        HttpClient.cmEnqueue(service.listArticleTop(),
+            object : HttpClient.IResultListener<BaseResponse<List<ArticleBeanItem>>>{
+                override fun onSuccess(response: BaseResponse<List<ArticleBeanItem>>?) {
+                    if (!response?.data.isNullOrEmpty()){
+                        for (item in response!!.data){
+                            item.isTop = true
+                        }
+                        topArticles.value = response?.data
+                    }
+                }
+
+                override fun onError(message: String?) {
+                    Log.d(TAG, "onError: getBanner$message ")
+                }
+
+            })
+
     }
 }

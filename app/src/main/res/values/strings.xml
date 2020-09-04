@@ -7,4 +7,7 @@
     <string name="menu_mine">我的</string>
     <string name="tag_new">新</string>
     <string name="tag_top">置顶</string>
+    <string name="footer_done">已经到底了哟~</string>
+    <string name="footer_error">点击重试~</string>
+
 </resources>

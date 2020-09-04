@@ -30,7 +30,6 @@
         android:visibility="gone"
         tools:visibility="visible"
         tools:text="标签"
-        android:textColor="@color/gray"
         android:paddingHorizontal="@dimen/dp_3"
         android:layout_marginStart="@dimen/dp_5"
         android:background="@drawable/shape_rect_round_appcolor"
@@ -74,12 +73,15 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintLeft_toRightOf="@id/iv_item_pic"
         app:layout_constraintTop_toBottomOf="@id/tv_item_name"
+        app:layout_constraintBottom_toTopOf="@id/tv_item_description"
+        app:layout_goneMarginBottom="@dimen/dp_10"
         app:layout_constraintRight_toRightOf="parent"
         tools:text="标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题" />
 
     <TextView
         android:id="@+id/tv_item_description"
         style="@style/TagTvStyle"
+        tools:visibility="visible"
         android:layout_width="0dp"
         app:layout_constraintHorizontal_weight="1"
         tools:text="描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描描述描述描述描述描述描述"

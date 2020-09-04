@@ -1,16 +1,20 @@
 package com.yx.wanandroidkt.ui.fragment
 
-import android.icu.lang.UCharacter
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.yx.wanandroidkt.R
 import com.yx.wanandroidkt.base.BaseFragment
+import com.yx.wanandroidkt.base.LoadMoreAdapter
+import com.yx.wanandroidkt.ui.adapter.HeaderAdapter
 import com.yx.wanandroidkt.ui.adapter.HomeFragmentAdapter
+import com.yx.wanandroidkt.ui.adapter.TopAdapter
 import com.yx.wanandroidkt.viewmodel.HomeFragmentVM
 import com.yx.wanandroidkt.viewmodel.bean.ArticleBeanItem
+import com.yx.wanandroidkt.viewmodel.bean.BannerBean
 import kotlinx.android.synthetic.main.fragment_home.*
 
 /**
@@ -23,8 +27,43 @@ class HomeFragment: BaseFragment() {
         fun getInstance(): HomeFragment = HomeFragment()
     }
 
-    private var adapter: HomeFragmentAdapter? = null
-    private var dataList = mutableListOf<ArticleBeanItem>()
+    private val model: HomeFragmentVM by viewModels<HomeFragmentVM>()
+
+
+    /**
+     * 文章列表的总的adapter，paging分页处理
+     */
+    private val adapter by lazy {
+        HomeFragmentAdapter(R.layout.item_rv_home)
+    }
+
+    /**
+     * 头部 banner 轮播图
+     */
+    private val bannerAdapter by lazy {
+        HeaderAdapter(this, R.layout.layout_banner_header, bannerList)
+    }
+
+    /**
+     *置顶文章 adapter
+     */
+    private val topAdapter by lazy {
+        TopAdapter( R.layout.item_rv_home, topList)
+    }
+
+    /**
+     * 文章列表adapter
+     */
+    private val articleAdapter by lazy {
+        adapter.withLoadStateFooter(LoadMoreAdapter(object : LoadMoreAdapter.Listener{
+            override fun retry(loadState: LoadState) {
+                adapter.retry()
+            }
+        }))
+    }
+
+    private var bannerList  = mutableListOf<List<BannerBean>>()
+    private var topList  = mutableListOf<ArticleBeanItem>()
 
     override fun getLayoutId(): Int {
         return  R.layout.fragment_home
@@ -34,23 +73,58 @@ class HomeFragment: BaseFragment() {
         setToolbarLeftImageVisibility(false)
         setTitle(resources.getString(R.string.menu_home))
 
-        adapter = HomeFragmentAdapter(requireContext(),R.layout.item_rv_home,dataList!!)
         rv_home.layoutManager = LinearLayoutManager(requireContext())
-        rv_home.addItemDecoration(DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL))
-        rv_home.adapter = adapter
+        rv_home.adapter =  ConcatAdapter(bannerAdapter,topAdapter,articleAdapter)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            requestHeader()
+            adapter.refresh()
+
+        }
+
+        adapter.addLoadStateListener {
+            when(it.refresh){
+                is LoadState.Loading -> swipeRefreshLayout.isRefreshing = true
+                else -> swipeRefreshLayout.isRefreshing = false
+            }
+        }
+
     }
 
     override fun registerListener() {
 
     }
 
+    private fun  requestHeader(){
+        model.getBannerList().observe(this, Observer {
+            if ( !it.isNullOrEmpty()){
+                bannerList?.clear()
+                bannerList?.add(it)
+                bannerAdapter?.notifyDataSetChanged()
+            }
+
+        })
+        model.geTopArticle().observe(this, Observer {
+            if ( !it.isNullOrEmpty()){
+                topList?.clear()
+                topList?.addAll(it)
+                topAdapter?.notifyDataSetChanged()
+            }
+
+        })
+    }
+
     override fun requestData() {
-        val model: HomeFragmentVM by viewModels<HomeFragmentVM>()
+
+        requestHeader()
+
         model.getArticleList().observe(this, Observer {
-            dataList.addAll(it.datas)
-            adapter?.notifyDataSetChanged()
+            lifecycleScope.launchWhenCreated {
+                adapter.submitData(it)
+            }
         })
 
     }
+
 
 }
