@@ -1,14 +1,16 @@
 package com.yx.wanandroidkt.base
 
+import android.content.ContentValues
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.scwang.smart.refresh.footer.ClassicsFooter
+import com.scwang.smart.refresh.header.ClassicsHeader
 import com.yx.wanandroidkt.R
-import com.yx.wanandroidkt.ui.adapter.CommonArticleAdapter
+import com.yx.wanandroidkt.ui.adapter.CommonAdapter
 import com.yx.wanandroidkt.viewmodel.CommonFragmentVM
+import com.yx.wanandroidkt.viewmodel.bean.ArticleBeanItem
 import kotlinx.android.synthetic.main.fragment_common_article.*
 
 /**
@@ -18,9 +20,17 @@ import kotlinx.android.synthetic.main.fragment_common_article.*
  */
 open class CommonArticleFragment: BaseFragment() {
 
+
     private val adapter by lazy {
-        CommonArticleAdapter(R.layout.item_rv_article)
+        CommonAdapter(R.layout.item_rv_article,articleList)
     }
+
+    /**
+     * 数据源
+     */
+    private var articleList  = mutableListOf<ArticleBeanItem>()
+
+    private var isRefresh = true
 
     private val model: CommonFragmentVM by viewModels<CommonFragmentVM>()
 
@@ -45,33 +55,45 @@ open class CommonArticleFragment: BaseFragment() {
 
 
 
-    fun initRecycleView(){
+    fun initRecycleView(contentValues: ContentValues){
         rv_article.layoutManager = LinearLayoutManager(requireContext())
-        rv_article.adapter = adapter.withLoadStateFooter(LoadMoreAdapter(object : LoadMoreAdapter.Listener{
-            override fun retry(loadState: LoadState) {
-                adapter.retry()
-            }
-        }))
+        rv_article.adapter = adapter
+
+        swipeRefreshLayout.setRefreshHeader(ClassicsHeader(requireContext()))
+        swipeRefreshLayout.setRefreshFooter(ClassicsFooter(requireContext()))
 
         swipeRefreshLayout.setOnRefreshListener {
-            adapter.refresh()
+            isRefresh = true
+            model.getArticleList(true,contentValues)
         }
 
-        adapter.addLoadStateListener {
-            when(it.refresh){
-                is LoadState.Loading -> swipeRefreshLayout.isRefreshing = true
-                else -> swipeRefreshLayout.isRefreshing = false
-            }
+        swipeRefreshLayout.setOnLoadMoreListener {
+            isRefresh = false
+            model.getArticleList(false,contentValues)
+
         }
+
 
     }
 
-    fun  fetchData(){
+    fun  fetchData(contentValues: ContentValues){
 
-        model.getArticles().observe(this, Observer {
-            lifecycleScope.launchWhenCreated{
-                adapter.submitData(it)
+        model.articleResponse.observe(this, Observer {
+            if (isRefresh){
+                swipeRefreshLayout.finishRefresh()
+                articleList.clear()
+            }else{
+                swipeRefreshLayout.finishLoadMore()
             }
+            articleList.addAll(it.data.datas)
+            adapter.notifyDataSetChanged()
+
         })
+
+        model.getArticleList(isRefresh,contentValues)
+
+
     }
+
+
 }

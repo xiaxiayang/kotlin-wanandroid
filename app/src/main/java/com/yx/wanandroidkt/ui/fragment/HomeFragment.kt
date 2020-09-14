@@ -2,16 +2,14 @@ package com.yx.wanandroidkt.ui.fragment
 
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.scwang.smart.refresh.footer.ClassicsFooter
+import com.scwang.smart.refresh.header.ClassicsHeader
 import com.yx.wanandroidkt.R
 import com.yx.wanandroidkt.base.BaseFragment
-import com.yx.wanandroidkt.base.LoadMoreAdapter
-import com.yx.wanandroidkt.ui.adapter.CommonArticleAdapter
-import com.yx.wanandroidkt.ui.adapter.HeaderAdapter
-import com.yx.wanandroidkt.ui.adapter.TopAdapter
+import com.yx.wanandroidkt.ui.adapter.BannerAdapter
+import com.yx.wanandroidkt.ui.adapter.CommonAdapter
 import com.yx.wanandroidkt.viewmodel.HomeFragmentVM
 import com.yx.wanandroidkt.viewmodel.bean.ArticleBeanItem
 import com.yx.wanandroidkt.viewmodel.bean.BannerBean
@@ -29,41 +27,21 @@ class HomeFragment: BaseFragment() {
 
     private val model: HomeFragmentVM by viewModels<HomeFragmentVM>()
 
-
-    /**
-     * 文章列表的总的adapter，paging分页处理
-     */
-    private val adapter by lazy {
-        CommonArticleAdapter(R.layout.item_rv_article)
+    private val commonAdapter by lazy {
+        CommonAdapter(R.layout.item_rv_article,articleList)
     }
 
-    /**
-     * 头部 banner 轮播图
-     */
     private val bannerAdapter by lazy {
-        HeaderAdapter(this, R.layout.layout_banner_header, bannerList)
-    }
-
-    /**
-     *置顶文章 adapter
-     */
-    private val topAdapter by lazy {
-        TopAdapter( R.layout.item_rv_article, topList)
-    }
-
-    /**
-     * 文章列表adapter
-     */
-    private val articleAdapter by lazy {
-        adapter.withLoadStateFooter(LoadMoreAdapter(object : LoadMoreAdapter.Listener{
-            override fun retry(loadState: LoadState) {
-                adapter.retry()
-            }
-        }))
+        BannerAdapter(this,R.layout.layout_banner_header,bannerList)
     }
 
     private var bannerList  = mutableListOf<List<BannerBean>>()
-    private var topList  = mutableListOf<ArticleBeanItem>()
+    private var articleList  = mutableListOf<ArticleBeanItem>()
+
+    /**
+     * 是否是刷新
+     */
+    private var isRefresh = true
 
     override fun getLayoutId(): Int {
         return  R.layout.fragment_common_article
@@ -74,19 +52,17 @@ class HomeFragment: BaseFragment() {
         setTitle(resources.getString(R.string.menu_home))
 
         rv_article.layoutManager = LinearLayoutManager(requireContext())
-        rv_article.adapter =  ConcatAdapter(bannerAdapter,topAdapter,articleAdapter)
+        rv_article.adapter =  ConcatAdapter(bannerAdapter,commonAdapter)
 
+        swipeRefreshLayout.setRefreshHeader(ClassicsHeader(requireContext()))
+        swipeRefreshLayout.setRefreshFooter(ClassicsFooter(requireContext()))
         swipeRefreshLayout.setOnRefreshListener {
-            requestHeader()
-            adapter.refresh()
-
+            isRefresh = true
+            model.refreshArticles()
         }
-
-        adapter.addLoadStateListener {
-            when(it.refresh){
-                is LoadState.Loading -> swipeRefreshLayout.isRefreshing = true
-                else -> swipeRefreshLayout.isRefreshing = false
-            }
+        swipeRefreshLayout.setOnLoadMoreListener {
+            isRefresh = false
+            model.loadMoreArticles()
         }
 
     }
@@ -95,34 +71,31 @@ class HomeFragment: BaseFragment() {
 
     }
 
-    private fun  requestHeader(){
-        model.getBannerList().observe(this, Observer {
-            if ( !it.isNullOrEmpty()){
-                bannerList?.clear()
-                bannerList?.add(it)
-                bannerAdapter?.notifyDataSetChanged()
-            }
-
-        })
-        model.geTopArticle().observe(this, Observer {
-            if ( !it.isNullOrEmpty()){
-                topList?.clear()
-                topList?.addAll(it)
-                topAdapter?.notifyDataSetChanged()
-            }
-
-        })
-    }
-
     override fun requestData() {
 
-        requestHeader()
-
-        model.getArticleList().observe(this, Observer {
-            lifecycleScope.launchWhenCreated {
-                adapter.submitData(it)
+        model.bannerResponse.observe(this, Observer {
+            if (isSuccess(it)){
+                bannerList.add(it.data)
+                bannerAdapter.notifyDataSetChanged()
+            }else{
+                showToast(it.errorMsg)
             }
         })
+
+        model.articleResponse.observe(this, Observer {
+            if (isRefresh){
+                articleList.clear()
+                swipeRefreshLayout.finishRefresh()
+            }else{
+                swipeRefreshLayout.finishLoadMore()
+            }
+            articleList.addAll(it)
+            commonAdapter.notifyDataSetChanged()
+        })
+
+        model.getBanners()
+
+        model.refreshArticles()
 
     }
 

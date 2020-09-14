@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.yx.wanandroidkt.viewmodel.bean.BaseResponse
 import kotlinx.android.synthetic.main.layout_toolbar.*
 
 /**
@@ -58,4 +60,10 @@ abstract class BaseFragment: Fragment() {
         }
 
     }
+
+    fun showToast(message: String?){
+        Toast.makeText(requireContext(),message?:"",Toast.LENGTH_SHORT).show()
+    }
+
+    fun <T> isSuccess(baseResponse: BaseResponse<T>?) = baseResponse != null && baseResponse.errorCode == 0
 }

@@ -1,6 +1,9 @@
 package com.yx.wanandroidkt.ui.fragment
 
+import android.content.ContentValues
+import android.os.Bundle
 import com.yx.wanandroidkt.base.CommonArticleFragment
+import com.yx.wanandroidkt.constans.ApiConst
 
 /**
  *
@@ -9,18 +12,30 @@ import com.yx.wanandroidkt.base.CommonArticleFragment
  */
 class AccountChildFragment: CommonArticleFragment() {
 
+
+    private val contentValues = ContentValues()
+
     companion object{
-        fun getInstance() = AccountChildFragment()
+        fun getInstance(args:Bundle): AccountChildFragment  {
+            val fragment = AccountChildFragment()
+            fragment.arguments = args
+            return fragment
+        }
     }
     override fun initView() {
         super.initView()
         setToolbarVisibility(false)
-        initRecycleView()
+
+        val id = arguments?.getInt("id")
+        contentValues.put(ApiConst.API_CODE,ApiConst.API_WX_ARTICLE_LIST)
+        contentValues.put("id",id)
+
+        initRecycleView(contentValues)
     }
 
     override fun requestData() {
         super.requestData()
-        fetchData()
+        fetchData(contentValues)
     }
 
 }

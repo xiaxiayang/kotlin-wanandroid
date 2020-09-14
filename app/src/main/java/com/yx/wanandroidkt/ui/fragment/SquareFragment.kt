@@ -1,7 +1,9 @@
 package com.yx.wanandroidkt.ui.fragment
 
+import android.content.ContentValues
 import com.yx.wanandroidkt.R
 import com.yx.wanandroidkt.base.CommonArticleFragment
+import com.yx.wanandroidkt.constans.ApiConst
 
 /**
  *
@@ -14,16 +16,22 @@ class SquareFragment: CommonArticleFragment() {
         fun getInstance(): SquareFragment = SquareFragment()
     }
 
+    private val contentValues = ContentValues()
+
     override fun initView() {
         setToolbarLeftImageVisibility(false)
         setTitle(resources.getString(R.string.menu_square))
-        initRecycleView()
+
+        contentValues.put(ApiConst.API_CODE,ApiConst.API_USER_ARTICLE_LIST)
+
+        initRecycleView(contentValues)
     }
 
     override fun registerListener() {
     }
 
     override fun requestData() {
-        fetchData()
+
+        fetchData(contentValues)
     }
 }

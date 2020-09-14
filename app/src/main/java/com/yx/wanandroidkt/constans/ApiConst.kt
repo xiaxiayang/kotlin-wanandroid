@@ -11,5 +11,12 @@ class ApiConst {
         const val CONNECT_TIME_OUT_SECONDS = 20L
         const val READ_TIME_OUT_SECONDS = 20L
         const val WHITE_TIME_OUT_SECONDS = 20L
+
+
+        //todo 用于复用页面时判断调用哪个api方法的，目前未想到优化方法，后期优化
+        const val API_CODE = "apiCode"
+        const val API_USER_ARTICLE_LIST = "user_article/list" //广场
+        const val API_WX_ARTICLE_LIST = "wxarticle/list" //公众号
+
     }
 }
